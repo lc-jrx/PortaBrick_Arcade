@@ -1,7 +1,7 @@
 from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import ForceSensor
 from pybricks.parameters import Button, Port, Color
-from pybricks.tools import wait
+from pybricks.tools import wait, StopWatch
 from matrix_helper import MatrixHelper
 from pixel_pics import PixelPics
 from urandom import randint
@@ -20,7 +20,7 @@ class BrickSnake:
         # self.slow_counter = 0  # counter for slow_factor
 
         # Variables for game SNAKE
-        self.__hardgame = True  # If True hitting the wall ends the game
+        self.__hardgame = False  # If True hitting the wall ends the game
         self.__direction = ()  # initial direction of snake
         self.__snake_head = ()  # snake head at game start
         self.__snake_body = []  # snake body at game start
@@ -44,108 +44,138 @@ class BrickSnake:
         self.__button_R = ForceSensor(Port.F)  # initialize LEGO Spike Prime Force Sensor as right button
         self.__hub_buttons = []  # initialize variable that holds info about pressed button
 
+    @staticmethod
+    def __wait(time):
+        """ Part of generator function for using parallel computing without threads.
+            Source: https://github.com/orgs/pybricks/discussions/356 """
+        timer = StopWatch()
+        while timer.time() < time:
+            yield
+
     def __input_buttons(self):
-        # turn button taps to self.direction change
-        if self.__button_L.touched():
-            # turn snake self.direction counter-clockwise
-            if self.__direction == (1, 0):  # from right to left
-                self.__direction = (0, -1)
-            elif self.__direction == (0, -1):  # from bottom to top
-                self.__direction = (-1, 0)
-            elif self.__direction == (-1, 0):  # from left to right
-                self.__direction = (0, 1)
-            elif self.__direction == (0, 1):  # from top to bottom
-                self.__direction = (1, 0)
-        elif self.__button_R.touched():
-            # turn snake self.direction clockwise
-            if self.__direction == (1, 0):  # from left to right
-                self.__direction = (0, 1)
-            elif self.__direction == (0, 1):  # from top to bottom
-                self.__direction = (-1, 0)
-            elif self.__direction == (-1, 0):  # from right to left
-                self.__direction = (0, -1)
-            elif self.__direction == (0, -1):  # from bottom to top
-                self.__direction = (1, 0)
+        print("Get input")
+        while True:
+            # turn button taps to self.direction change
+            if self.__button_L.touched():
+                print("Left touched")
+                # turn snake self.direction counter-clockwise
+                if self.__direction == (1, 0):  # from right to left
+                    self.__direction = (0, -1)
+                elif self.__direction == (0, -1):  # from bottom to top
+                    self.__direction = (-1, 0)
+                elif self.__direction == (-1, 0):  # from left to right
+                    self.__direction = (0, 1)
+                elif self.__direction == (0, 1):  # from top to bottom
+                    self.__direction = (1, 0)
+            elif self.__button_R.touched():
+                print("Right touched")
+                # turn snake self.direction clockwise
+                if self.__direction == (1, 0):  # from left to right
+                    self.__direction = (0, 1)
+                elif self.__direction == (0, 1):  # from top to bottom
+                    self.__direction = (-1, 0)
+                elif self.__direction == (-1, 0):  # from right to left
+                    self.__direction = (0, -1)
+                elif self.__direction == (0, -1):  # from bottom to top
+                    self.__direction = (1, 0)
+            yield
 
     def __show_something_on_hub(self):
-        # if self.button_L.touched():
-        #     self.hub.display.icon(Icon.COUNTERCLOCKWISE)
-        # elif self.button_R.touched():
-        #     self.hub.display.icon(Icon.CLOCKWISE)
-        # elif Button.BLUETOOTH in self.hub_buttons:
-        #     self.hub.display.icon(Icon.ARROW_RIGHT_UP)
-        # else:
-        #     self.hub.display.icon(Icon.SQUARE)
-        self.__hub.display.number(self.__game_counter)
+        while True:
+            # if self.button_L.touched():
+            #     self.hub.display.icon(Icon.COUNTERCLOCKWISE)
+            # elif self.button_R.touched():
+            #     self.hub.display.icon(Icon.CLOCKWISE)
+            # elif Button.BLUETOOTH in self.hub_buttons:
+            #     self.hub.display.icon(Icon.ARROW_RIGHT_UP)
+            # else:
+            #     self.hub.display.icon(Icon.SQUARE)
+            self.__hub.display.number(self.__game_counter)
+            yield
 
     def __overule_hardgame(self):
         if not self.__hardgame:
-            # print("-- Hardgame Check --")
-            # print(self.snake_head)
-            if self.__snake_head[0] == 6 and self.__direction == (1, 0):  # from left to right reaching screen boarder
+            if self.__snake_head[0] == 6 and self.__direction == (1, 0):
+                # from left to right reaching screen boarder
                 self.__snake_head = (self.__snake_head[0] - 6, self.__snake_head[1])
-            elif self.__snake_head[1] == 6 and self.__direction == (0, 1):  # from top to bottom reaching screen boarder
+            elif self.__snake_head[1] == 6 and self.__direction == (0, 1):
+                # from top to bottom reaching screen boarder
                 self.__snake_head = (self.__snake_head[0], self.__snake_head[1] - 6)
-            elif self.__snake_head[0] == -1 and self.__direction == (-1, 0):  # from right to left reaching screen boarder
+            elif self.__snake_head[0] == -1 and self.__direction == (-1, 0):
+                # from right to left reaching screen boarder
                 self.__snake_head = (self.__snake_head[0] + 6, self.__snake_head[1])
-            elif self.__snake_head[1] == -1 and self.__direction == (0, -1):  # from bottom to top reaching screen boarder
+            elif self.__snake_head[1] == -1 and self.__direction == (0, -1):
+                # from bottom to top reaching screen boarder
                 self.__snake_head = (self.__snake_head[0], self.__snake_head[1] + 6)
-            # print(self.snake_head)
-            # print("------------------------\n")
 
     def __check_gameover(self):
-        if self.__snake_head[0] == -1 or \
-                self.__snake_head[1] == -1 or \
-                self.__snake_head[0] == self.__resolution[0] or \
-                self.__snake_head[1] == self.__resolution[1]:
-            self.__gameover = True
+        print("Check gameover")
+        while True:
+            if self.__snake_head[0] == -1 or \
+                    self.__snake_head[1] == -1 or \
+                    self.__snake_head[0] == self.__resolution[0] or \
+                    self.__snake_head[1] == self.__resolution[1]:
+                self.__gameover = True
+                print(self.__gameover)
+            yield
 
     def __check_snake_eats_itself(self):
-        # if self.snake_head in self.snake_body:
-        #     self.gameover = True
-        if self.__snake_head in self.__snake_body[1:]:
-            self.__gameover = True
-        # print("Gameover:", self.gameover)
+        print("Check snake collision")
+        while True:
+            # if self.snake_head in self.snake_body:
+            #     self.gameover = True
+            if self.__snake_head in self.__snake_body[1:]:
+                self.__gameover = True
+            # print("Gameover:", self.__gameover)
+            yield
 
     def __check_snake_had_lunch(self):
-        if self.__lunch == self.__snake_head:
-            self.__hub.speaker.play_notes(["D2/8"], 200)
-            self.__game_counter += 1
-            self.__snake_had_lunch = True
-            self.__lunch = (randint(0, self.__resolution[0] - 1), randint(0, self.__resolution[1] - 1))
-        else:
-            self.__snake_had_lunch = False
+        print("Check snake lunch")
+        while True:
+            if self.__lunch == self.__snake_head:
+                self.__hub.speaker.play_notes(["D2/8"], 200)
+                self.__game_counter += 1
+                self.__snake_had_lunch = True
+                self.__lunch = (randint(0, self.__resolution[0] - 1), randint(0, self.__resolution[1] - 1))
+            else:
+                self.__snake_had_lunch = False
+            yield
 
     def __snake_movement(self):
-        # print("Start movement")
-        self.__snake_head = (self.__snake_head[0] + self.__direction[0], self.__snake_head[1] + self.__direction[1])
-        # print("Head @ start: ", self.snake_head)
-        self.__overule_hardgame()
-        # print("Head after check: ", self.snake_head)
-        self.__snake_body.insert(0, self.__snake_head)
-        # print("Body: ", self.snake_body)
-        if not self.__snake_had_lunch:
-            self.__render_off = self.__snake_body.pop()
-        else:
-            self.__render_off = ()
-        self.__render_on = self.__snake_body.copy()
-        # print("--------------------------------------------------------\n")
+        print("Snake movement")
+        while True:
+            yield from self.__wait(self.__game_speed)
+            # print("Start movement")
+            self.__snake_head = (self.__snake_head[0] + self.__direction[0], self.__snake_head[1] + self.__direction[1])
+            # print("Head @ start: ", self.__snake_head)
+            self.__overule_hardgame()
+            # print("Head after check: ", self.__snake_head)
+            self.__snake_body.insert(0, self.__snake_head)
+            # print("Body: ", self.snake_body)
+            if not self.__snake_had_lunch:
+                self.__render_off = self.__snake_body.pop()
+            else:
+                self.__render_off = ()
+            self.__render_on = self.__snake_body.copy()
+            # print("--------------------------------------------------------\n")
 
     def __render_matrix_display(self):
-        # print("Start rendering")
+        print("Render matrix")
+        while True:
+            # print("Start rendering")
+            # print(self.lunch)
+            self.__matrix.pixel_on(self.__lunch[0], self.__lunch[1], Color.ORANGE)
 
-        # print(self.lunch)
-        self.__matrix.pixel_on(self.__lunch[0], self.__lunch[1], Color.ORANGE)
+            # print(self.render_off)
+            if self.__render_off:
+                self.__matrix.pixel_off(self.__render_off[0], self.__render_off[1])
 
-        # print(self.render_off)
-        if self.__render_off:
-            self.__matrix.pixel_off(self.__render_off[0], self.__render_off[1])
-
-        # print(self.render_on)
-        self.__matrix.pixel_on(self.__render_on[0][0], self.__render_on[0][1], Color(h=235, s=80, v=60))
-        for i in range(len(self.__render_on[1:])):
-            self.__matrix.pixel_on(self.__render_on[i + 1][0], self.__render_on[i + 1][1], Color(h=235, s=80, v=50))
-        # print("--------------------------------------------------------\n")
+            # print(self.render_on)
+            self.__matrix.pixel_on(self.__render_on[0][0], self.__render_on[0][1], Color(h=235, s=80, v=60))
+            for i in range(len(self.__render_on[1:])):
+                self.__matrix.pixel_on(self.__render_on[i + 1][0], self.__render_on[i + 1][1], Color(h=235, s=80, v=50))
+            # print("--------------------------------------------------------\n")
+            yield
 
     def __set_game_settings(self):
         action = False  # set input status
@@ -237,26 +267,35 @@ class BrickSnake:
                 action = True
 
     def gameplay(self):
-        self.__init_game()
+        # self.__init_game()
         while self.__reset:
             self.__init_snake()
             while not self.__quit:
-                self.__render_matrix_display()
-                self.__show_something_on_hub()
-                self.__input_buttons()
-                self.__snake_movement()
-                self.__check_snake_had_lunch()
-                self.__check_snake_eats_itself()
-                self.__check_gameover()
-                if self.__gameover:
-                    self.__matrix.matrix_off()
-                    # make a sad sound
-                    self.__hub.speaker.play_notes(["B3/2", "B2/2"], 160)
-                    # show a grafik for game over
-                    self.__matrix.draw_pixel_graphic(self.__pixel_pics.smiley_sad, Color.RED)
-                    self.__hub.display.text("Game Over", 200, 50)
-                    wait(1500)  # wait one and a half seconds
-                    self.__quit = True
+                tasks = [
+                    self.__render_matrix_display(),
+                    self.__show_something_on_hub(),
+                    self.__input_buttons(),
+                    self.__snake_movement(),
+                    self.__check_snake_had_lunch(),
+                    self.__check_snake_eats_itself(),
+                    self.__check_gameover()
+                ]
+
+                while not self.__gameover:
+                    for t in tasks:
+                        next(t)
+                    wait(100)
+
+                # Here starts gameover action
+                # if self.__gameover:
+                #     self.__matrix.matrix_off()
+                #     # make a sad sound
+                #     self.__hub.speaker.play_notes(["B3/2", "B2/2"], 160)
+                #     # show a grafik for game over
+                #     self.__matrix.draw_pixel_graphic(self.__pixel_pics.smiley_sad, Color.RED)
+                #     self.__hub.display.text("Game Over", 200, 50)
+                #     wait(1500)  # wait one and a half seconds
+                #     self.__quit = True
                 wait(self.__game_speed)
             self.__reset_game()
         self.__matrix.matrix_off()

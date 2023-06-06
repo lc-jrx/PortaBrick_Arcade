@@ -27,6 +27,7 @@ class BrickPong:
         self.__gameover = None
         self.__quit = False
         self.__reset = True
+        self.__runnning = False
 
         self.__paddle_A = self.__Paddle("A", self.__screen_width, self.__screen_height, self.__hardgame_factor)
         self.__paddle_B = self.__Paddle("B", self.__screen_width, self.__screen_height, self.__hardgame_factor)
@@ -39,9 +40,6 @@ class BrickPong:
         self.__button_L = ForceSensor(Port.E)  # initialize LEGO Spike Prime Force Sensor as left button
         self.__button_R = ForceSensor(Port.F)  # initialize LEGO Spike Prime Force Sensor as right button
         self.__hub_buttons = []  # initialize variable that holds info about pressed button
-
-        # self.last_force_left = None
-        # self.last_force_right = None
 
     class __Paddle:
         def __init__(self, player, screen_width, screen_height, difficulty):
@@ -150,31 +148,32 @@ class BrickPong:
 
     def __handle_ball_collisions(self):
         while True:
-            # Set up two temporary list for y-coordinates
-            paddle_a_y = []
-            paddle_b_y = []
-
             # Handle ball collisions with player and computer paddles
             if self.__ball_x_velocity == -1 and self.__ball_x == 1:
                 for i in range(len(self.__paddle_A.paddle_pix)):
-                    paddle_a_y.append(self.__paddle_A.paddle_pix[i][1])
-                if self.__ball_y - 1 in paddle_a_y:
-                    # print("Paddle A contact")
-                    self.__ball_x_velocity = -self.__ball_x_velocity
-                    self.__score += 1
+                    if self.__ball_y_velocity == 1:
+                        if self.__ball_y + 1 == self.__paddle_A.paddle_pix[i][1]:
+                            # print("Paddle A contact")
+                            self.__ball_x_velocity = -self.__ball_x_velocity
+                            self.__score += 1
+                    elif self.__ball_y_velocity == -1:
+                        if self.__ball_y - 1 == self.__paddle_A.paddle_pix[i][1]:
+                            # print("Paddle A contact")
+                            self.__ball_x_velocity = -self.__ball_x_velocity
+                            self.__score += 1
             elif self.__ball_x_velocity == 1 and self.__ball_x == self.__screen_width - 2:
                 for i in range(len(self.__paddle_B.paddle_pix)):
-                    paddle_b_y.append(self.__paddle_B.paddle_pix[i][1])
-                if self.__ball_y + 1 in paddle_b_y and self.__ball_x_velocity == 1:
-                    # print("Paddle B contact")
-                    self.__ball_x_velocity = -self.__ball_x_velocity
+                    if self.__ball_y + 1 == self.__paddle_B.paddle_pix[i][1]:
+                        # print("Paddle B contact")
+                        self.__ball_x_velocity = -self.__ball_x_velocity
 
             # Handle ball collisions with upper and lower walls
             if self.__ball_y == 0 or self.__ball_y == self.__screen_height - 1:
                 self.__ball_y_velocity = -self.__ball_y_velocity
 
             # Handle ball collisions with left and right walls
-            if self.__ball_x == -1 or self.__ball_x == self.__screen_width:
+            if self.__ball_x == 0 or self.__ball_x == self.__screen_width:
+                # print("Ball x {}, y {}, Paddle {}".format(self.__ball_x, self.__ball_y, self.__paddle_A.paddle_pix))
                 self.__gameover = True
 
             yield

@@ -9,8 +9,8 @@ class NotRunException(Exception):
 
 
 class DetectDevices:
-    """Class to detect which devices are connected to which port.
-    Basis taken from: https://docs.pybricks.com/en/latest/iodevices/pupdevice.html#detecting-devices"""
+    """ Class to detect which devices are connected to which port.
+        Basis taken from: https://docs.pybricks.com/en/latest/iodevices/pupdevice.html#detecting-devices"""
 
     def __init__(self):
         self.matrix_available = 0
