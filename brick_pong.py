@@ -27,7 +27,6 @@ class BrickPong:
         self.__gameover = None
         self.__quit = False
         self.__reset = True
-        self.__runnning = False
 
         self.__paddle_A = self.__Paddle("A", self.__screen_width, self.__screen_height, self.__hardgame_factor)
         self.__paddle_B = self.__Paddle("B", self.__screen_width, self.__screen_height, self.__hardgame_factor)
