@@ -11,6 +11,10 @@ class ResolutionException(Exception):
 
 
 class MatrixHelper:
+    """
+    The MatrixHelper class controls the overall matrix consisting of 3x3 individual matrices.
+    The number of matrices is freely selectable and is determined by the desired resolution.
+    """
     __res_x = None
     __res_y = None
 

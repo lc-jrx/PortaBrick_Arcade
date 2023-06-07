@@ -6,6 +6,10 @@ from pixel_pics import PixelPics
 
 
 class GameControl:
+    """ The GameControl class is used to control the flow of the BrickBoxColor. It unifies the selection of the game
+        settings and controls the behavior after a GameOver. additionally it provides sound and graphics for the
+        GameOver.
+    """
     def __init__(self, display_res_x, display_res_y, default_gamespeed):
         # Basic variables
         self.__resolution = (display_res_x, display_res_y)
@@ -21,6 +25,9 @@ class GameControl:
         self.__hub_buttons = []  # initialize variable that holds info about pressed button
 
     def set_game_settings(self):
+        """ Sets the game variables for game speed and for the difficulty level.
+        :return:
+        """
         action = False  # set input status
 
         # Let's ask for how hard to play
@@ -61,6 +68,9 @@ class GameControl:
         return self.__hardgame, self.__game_speed
 
     def reset_game(self):
+        """ Controls the behavior after a GameOver and resets the control variables when the game is played again.
+        :return:
+        """
         action = False  # set input status
         game_quit = None
         game_reset = None

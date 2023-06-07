@@ -12,7 +12,8 @@ from brick_snake import BrickSnake
 
 
 class BrickBoyColor:
-
+    """ Main Class of the BrickBoyColor. Controls the main menu and leads into the two games.
+    """
     def __init__(self):
         self.display_resolution = (6, 6)
 
@@ -40,11 +41,11 @@ class BrickBoyColor:
         self.hub.display.off()
 
     def dialog(self):
-        self.hub.display.text("Play SNAKE", 200, 50)
+        self.hub.display.text("SNAKE", 200, 50)
         wait(500)
         self.hub.display.icon(Icon.ARROW_LEFT_DOWN)
         wait(1000)
-        self.hub.display.text("Play PONG", 200, 50)
+        self.hub.display.text("PONG", 200, 50)
         wait(500)
         self.hub.display.icon(Icon.ARROW_RIGHT_DOWN)
         wait(1000)
