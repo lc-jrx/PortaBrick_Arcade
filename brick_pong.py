@@ -1,6 +1,6 @@
 from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import ForceSensor
-from pybricks.parameters import Button, Port, Color, Icon
+from pybricks.parameters import Port, Color
 from pybricks.tools import wait as blocking_wait, StopWatch
 from matrix_helper import MatrixHelper
 from game_control import GameControl

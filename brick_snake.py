@@ -196,7 +196,7 @@ class BrickSnake:
         self.loop = True
 
     def gameplay(self):
-        # self.__init_game()
+        self.__init_game()
         while self.__reset:
             self.__init_snake()
 
