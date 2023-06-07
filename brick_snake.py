@@ -1,8 +1,9 @@
 from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import ForceSensor
-from pybricks.parameters import Button, Port, Color
-from pybricks.tools import wait, StopWatch
+from pybricks.parameters import Port, Color
+from pybricks.tools import wait as blocking_wait, StopWatch
 from matrix_helper import MatrixHelper
+from game_control import GameControl
 from pixel_pics import PixelPics
 from urandom import randint
 
@@ -16,8 +17,6 @@ class BrickSnake:
         # Basic variables
         self.__resolution = (display_res_x, display_res_y)
         self.__game_speed = 300  # work speed itself
-        # self.slow_factor = 50  # reduce the speed of the snake
-        # self.slow_counter = 0  # counter for slow_factor
 
         # Variables for game SNAKE
         self.__hardgame = False  # If True hitting the wall ends the game
@@ -25,18 +24,18 @@ class BrickSnake:
         self.__snake_head = ()  # snake head at game start
         self.__snake_body = []  # snake body at game start
         self.__lunch = ()
-        # self.lunch = (randint(0, self.resolution[0] - 1),
-        #               randint(0, self.resolution[1] - 1))  # initial position of lunch
         self.__render_on = ()
         self.__render_off = []
         self.__snake_had_lunch = None
 
+        self.loop = None   # If True a press of the buttons will initiate a rotation. Should prevent a 180 degree turn.
         self.__game_counter = None
         self.__gameover = None
         self.__quit = False
         self.__reset = True
 
         # Initialize software and hardware
+        self.__gamecontrol = GameControl(self.__resolution[0], self.__resolution[1], self.__game_speed)
         self.__matrix = MatrixHelper(self.__resolution[0], self.__resolution[1])  # initialize driver for matrix
         self.__pixel_pics = PixelPics()  # initialize pixel drawings library
         self.__hub = PrimeHub()  # initialize LEGO Spike Prime Hub
@@ -53,22 +52,22 @@ class BrickSnake:
             yield
 
     def __input_buttons(self):
-        print("Get input")
+        # print("Get input")
         while True:
+            # decrease input sensitivity (slow down input)
+            yield from self.__wait(20)
             # turn button taps to self.direction change
-            if self.__button_L.touched():
-                print("Left touched")
+            if self.__button_L.pressed():
                 # turn snake self.direction counter-clockwise
-                if self.__direction == (1, 0):  # from right to left
+                if self.__direction == (1, 0):  # from left to right
                     self.__direction = (0, -1)
                 elif self.__direction == (0, -1):  # from bottom to top
                     self.__direction = (-1, 0)
-                elif self.__direction == (-1, 0):  # from left to right
+                elif self.__direction == (-1, 0):  # from right to left
                     self.__direction = (0, 1)
                 elif self.__direction == (0, 1):  # from top to bottom
                     self.__direction = (1, 0)
-            elif self.__button_R.touched():
-                print("Right touched")
+            elif self.__button_R.pressed():
                 # turn snake self.direction clockwise
                 if self.__direction == (1, 0):  # from left to right
                     self.__direction = (0, 1)
@@ -78,18 +77,20 @@ class BrickSnake:
                     self.__direction = (0, -1)
                 elif self.__direction == (0, -1):  # from bottom to top
                     self.__direction = (1, 0)
+            self.loop = False
             yield
 
     def __show_something_on_hub(self):
         while True:
-            # if self.button_L.touched():
-            #     self.hub.display.icon(Icon.COUNTERCLOCKWISE)
-            # elif self.button_R.touched():
-            #     self.hub.display.icon(Icon.CLOCKWISE)
-            # elif Button.BLUETOOTH in self.hub_buttons:
-            #     self.hub.display.icon(Icon.ARROW_RIGHT_UP)
+            # print("Render Display")
+            # if self.__button_L.pressed():
+            #     self.__hub.display.icon(Icon.COUNTERCLOCKWISE)
+            # elif self.__button_R.pressed():
+            #     self.__hub.display.icon(Icon.CLOCKWISE)
+            # elif Button.BLUETOOTH in self.__hub_buttons:
+            #     self.__hub.display.icon(Icon.ARROW_RIGHT_UP)
             # else:
-            #     self.hub.display.icon(Icon.SQUARE)
+            #     self.__hub.display.icon(Icon.SQUARE)
             self.__hub.display.number(self.__game_counter)
             yield
 
@@ -109,8 +110,8 @@ class BrickSnake:
                 self.__snake_head = (self.__snake_head[0], self.__snake_head[1] + 6)
 
     def __check_gameover(self):
-        print("Check gameover")
         while True:
+            # print("Check gameover")
             if self.__snake_head[0] == -1 or \
                     self.__snake_head[1] == -1 or \
                     self.__snake_head[0] == self.__resolution[0] or \
@@ -120,124 +121,70 @@ class BrickSnake:
             yield
 
     def __check_snake_eats_itself(self):
-        print("Check snake collision")
-        while True:
-            # if self.snake_head in self.snake_body:
-            #     self.gameover = True
-            if self.__snake_head in self.__snake_body[1:]:
-                self.__gameover = True
-            # print("Gameover:", self.__gameover)
-            yield
+        if self.__snake_head in self.__snake_body[1:]:
+            self.__gameover = True
 
     def __check_snake_had_lunch(self):
-        print("Check snake lunch")
-        while True:
-            if self.__lunch == self.__snake_head:
-                self.__hub.speaker.play_notes(["D2/8"], 200)
-                self.__game_counter += 1
-                self.__snake_had_lunch = True
-                self.__lunch = (randint(0, self.__resolution[0] - 1), randint(0, self.__resolution[1] - 1))
-            else:
-                self.__snake_had_lunch = False
-            yield
+        if self.__lunch == self.__snake_head:
+            self.__hub.speaker.play_notes(["D2/8"], 200)
+            self.__game_counter += 1
+            self.__snake_had_lunch = True
+            self.__lunch = (randint(0, self.__resolution[0] - 1), randint(0, self.__resolution[1] - 1))
+        else:
+            self.__snake_had_lunch = False
 
     def __snake_movement(self):
-        print("Snake movement")
         while True:
             yield from self.__wait(self.__game_speed)
-            # print("Start movement")
             self.__snake_head = (self.__snake_head[0] + self.__direction[0], self.__snake_head[1] + self.__direction[1])
-            # print("Head @ start: ", self.__snake_head)
             self.__overule_hardgame()
-            # print("Head after check: ", self.__snake_head)
             self.__snake_body.insert(0, self.__snake_head)
-            # print("Body: ", self.snake_body)
+            self.__check_snake_had_lunch()
             if not self.__snake_had_lunch:
-                self.__render_off = self.__snake_body.pop()
+                self.__render_off = list(self.__snake_body.pop())
             else:
-                self.__render_off = ()
+                self.__render_off.clear()
             self.__render_on = self.__snake_body.copy()
-            # print("--------------------------------------------------------\n")
+            self.__check_snake_eats_itself()
+            # prevent snake to make u-turn
+            self.loop = True
 
     def __render_matrix_display(self):
-        print("Render matrix")
         while True:
-            # print("Start rendering")
-            # print(self.lunch)
+            # render lunch
             self.__matrix.pixel_on(self.__lunch[0], self.__lunch[1], Color.ORANGE)
-
-            # print(self.render_off)
+            # render specific pixels off
             if self.__render_off:
                 self.__matrix.pixel_off(self.__render_off[0], self.__render_off[1])
+                self.__render_off.clear()
 
-            # print(self.render_on)
+            print(self.__render_on)
+
+            # render snake's head
             self.__matrix.pixel_on(self.__render_on[0][0], self.__render_on[0][1], Color(h=235, s=80, v=60))
+            # render snake's body
             for i in range(len(self.__render_on[1:])):
                 self.__matrix.pixel_on(self.__render_on[i + 1][0], self.__render_on[i + 1][1], Color(h=235, s=80, v=50))
-            # print("--------------------------------------------------------\n")
             yield
 
-    def __set_game_settings(self):
-        action = False  # set input status
-
-        # Let's ask for how hard to play
-        for char in "Hard Game?":  # that way we can speed up displaying the text rather than using hub.display.text()
-            # self.hub.display.text("Hard game?")
-            self.__hub.display.char(char)
-            wait(250)
-        while not action:
-            pressed = self.__hub.buttons.pressed()
-            if Button.RIGHT in pressed:
-                self.__hub.display.char("Y")
-                self.__hardgame = True
-            elif Button.LEFT in pressed:
-                self.__hub.display.char("N")
-                self.__hardgame = False
-            elif Button.BLUETOOTH in pressed:
-                action = True
-
-        action = False  # reset input status
-
-        # Let's ask for how fast to play
-        # self.hub.display.text("Difficulty?")
-        for char in "Difficulty?":  # that way we can speed up displaying the text rather than using hub.display.text()
-            # self.hub.display.text("Hard game?")
-            self.__hub.display.char(char)
-            wait(250)
-
-        difficulty = 3  # set game speed to mid (1 - 5)
-
-        while not action:
-            pressed = self.__hub.buttons.pressed()
-            self.__hub.display.char(str(difficulty))
-
-            if Button.RIGHT in pressed:
-                if difficulty < 5:
-                    difficulty += 1
-                    self.__game_speed -= 50
-            elif Button.LEFT in pressed:
-                if difficulty > 1:
-                    difficulty -= 1
-                    self.__game_speed += 50
-            elif Button.BLUETOOTH in pressed:
-                action = True
-            wait(250)
-
     def __init_game(self):
+        self.__matrix.matrix_off()
         self.__hub.display.text("Snake", 200, 50)
-        wait(1000)
+        blocking_wait(1000)
 
         self.__hub.speaker.volume(35)  # set volume to non deafening
 
         # Ask for game settings
-        self.__set_game_settings()
+        setting = self.__gamecontrol.set_game_settings()
+        self.__hardgame = setting[0]
+        self.__game_speed = setting[1]
 
     def __init_snake(self):
         # Initialize snake and it's lunch
         self.__snake_head = (2, 2)  # snake head at game start
         self.__snake_body = [(1, 2), (0, 2)]  # snake body at game start
         self.__snake_body.insert(0, self.__snake_head)
-        self.__render_on = self.__snake_body
+        self.__render_on = self.__snake_body.copy()
         self.__lunch = (randint(0, self.__resolution[0] - 1),
                         randint(0, self.__resolution[1] - 1))  # initial position of lunch
         self.__direction = (1, 0)  # initial direction of snake
@@ -246,58 +193,35 @@ class BrickSnake:
         # Initialize or reset the control variables
         self.__game_counter = 0
         self.__gameover = False
-
-    def __reset_game(self):
-        action = False  # set input status
-        self.__matrix.draw_pixel_graphic(self.__pixel_pics.smiley, Color.GREEN)
-        for char in "Play again?":
-            self.__hub.display.char(char)
-            wait(250)
-        while not action:
-            pressed = self.__hub.buttons.pressed()
-            if Button.RIGHT in pressed:
-                self.__hub.display.char("Y")
-                self.__matrix.matrix_off()
-                self.__reset = True
-                self.__quit = False
-                action = True
-            elif Button.LEFT in pressed:
-                self.__hub.display.char("N")
-                self.__reset = False
-                action = True
+        self.loop = True
 
     def gameplay(self):
         # self.__init_game()
         while self.__reset:
             self.__init_snake()
+
             while not self.__quit:
                 tasks = [
                     self.__render_matrix_display(),
                     self.__show_something_on_hub(),
                     self.__input_buttons(),
                     self.__snake_movement(),
-                    self.__check_snake_had_lunch(),
-                    self.__check_snake_eats_itself(),
                     self.__check_gameover()
                 ]
 
                 while not self.__gameover:
                     for t in tasks:
                         next(t)
-                    wait(100)
-
+                    blocking_wait(100)
                 # Here starts gameover action
-                # if self.__gameover:
-                #     self.__matrix.matrix_off()
-                #     # make a sad sound
-                #     self.__hub.speaker.play_notes(["B3/2", "B2/2"], 160)
-                #     # show a grafik for game over
-                #     self.__matrix.draw_pixel_graphic(self.__pixel_pics.smiley_sad, Color.RED)
-                #     self.__hub.display.text("Game Over", 200, 50)
-                #     wait(1500)  # wait one and a half seconds
-                #     self.__quit = True
-                wait(self.__game_speed)
-            self.__reset_game()
+                self.__gamecontrol.gameover()
+                blocking_wait(1500)  # wait one and a half seconds
+                self.__matrix.matrix_off()  # clear the matrix
+                self.__quit = True  # leave game loop
+                blocking_wait(self.__game_speed)
+            reset_values = self.__gamecontrol.reset_game()
+            self.__quit = reset_values[0]
+            self.__reset = reset_values[1]
         self.__matrix.matrix_off()
 
 
