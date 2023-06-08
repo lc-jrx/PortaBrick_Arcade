@@ -28,7 +28,7 @@ class BrickSnake:
         self.__render_off = []
         self.__snake_had_lunch = None
 
-        self.loop = None   # If True a press of the buttons will initiate a rotation. Should prevent a 180 degree turn.
+        self.loop = None   # Prevents a 180 degree turn on same.
         self.__game_counter = None
         self.__gameover = None
         self.__quit = False
@@ -54,43 +54,33 @@ class BrickSnake:
     def __input_buttons(self):
         # print("Get input")
         while True:
-            # decrease input sensitivity (slow down input)
-            yield from self.__wait(20)
             # turn button taps to self.direction change
-            if self.__button_L.pressed():
-                # turn snake self.direction counter-clockwise
-                if self.__direction == (1, 0):  # from left to right
-                    self.__direction = (0, -1)
-                elif self.__direction == (0, -1):  # from bottom to top
-                    self.__direction = (-1, 0)
-                elif self.__direction == (-1, 0):  # from right to left
-                    self.__direction = (0, 1)
-                elif self.__direction == (0, 1):  # from top to bottom
-                    self.__direction = (1, 0)
-            elif self.__button_R.pressed():
-                # turn snake self.direction clockwise
-                if self.__direction == (1, 0):  # from left to right
-                    self.__direction = (0, 1)
-                elif self.__direction == (0, 1):  # from top to bottom
-                    self.__direction = (-1, 0)
-                elif self.__direction == (-1, 0):  # from right to left
-                    self.__direction = (0, -1)
-                elif self.__direction == (0, -1):  # from bottom to top
-                    self.__direction = (1, 0)
-            self.loop = False
+            if self.loop:
+                if self.__button_L.touched():
+                    # turn snake self.direction counter-clockwise
+                    if self.__direction == (1, 0):  # from left to right
+                        self.__direction = (0, -1)
+                    elif self.__direction == (0, -1):  # from bottom to top
+                        self.__direction = (-1, 0)
+                    elif self.__direction == (-1, 0):  # from right to left
+                        self.__direction = (0, 1)
+                    elif self.__direction == (0, 1):  # from top to bottom
+                        self.__direction = (1, 0)
+                elif self.__button_R.touched():
+                    # turn snake self.direction clockwise
+                    if self.__direction == (1, 0):  # from left to right
+                        self.__direction = (0, 1)
+                    elif self.__direction == (0, 1):  # from top to bottom
+                        self.__direction = (-1, 0)
+                    elif self.__direction == (-1, 0):  # from right to left
+                        self.__direction = (0, -1)
+                    elif self.__direction == (0, -1):  # from bottom to top
+                        self.__direction = (1, 0)
+                self.loop = False
             yield
 
     def __show_something_on_hub(self):
         while True:
-            # print("Render Display")
-            # if self.__button_L.pressed():
-            #     self.__hub.display.icon(Icon.COUNTERCLOCKWISE)
-            # elif self.__button_R.pressed():
-            #     self.__hub.display.icon(Icon.CLOCKWISE)
-            # elif Button.BLUETOOTH in self.__hub_buttons:
-            #     self.__hub.display.icon(Icon.ARROW_RIGHT_UP)
-            # else:
-            #     self.__hub.display.icon(Icon.SQUARE)
             self.__hub.display.number(self.__game_counter)
             yield
 
@@ -146,7 +136,7 @@ class BrickSnake:
                 self.__render_off.clear()
             self.__render_on = self.__snake_body.copy()
             self.__check_snake_eats_itself()
-            # prevent snake to make u-turn
+            # prevent snake to make u-turn. Locks input for one movement cycle
             self.loop = True
 
     def __render_matrix_display(self):
@@ -157,9 +147,6 @@ class BrickSnake:
             if self.__render_off:
                 self.__matrix.pixel_off(self.__render_off[0], self.__render_off[1])
                 self.__render_off.clear()
-
-            print(self.__render_on)
-
             # render snake's head
             self.__matrix.pixel_on(self.__render_on[0][0], self.__render_on[0][1], Color(h=235, s=80, v=60))
             # render snake's body

@@ -10,6 +10,7 @@ class GameControl:
         settings and controls the behavior after a GameOver. additionally it provides sound and graphics for the
         GameOver.
     """
+
     def __init__(self, display_res_x, display_res_y, default_gamespeed):
         # Basic variables
         self.__resolution = (display_res_x, display_res_y)
@@ -23,6 +24,9 @@ class GameControl:
         self.__pixel_pics = PixelPics()  # initialize pixel drawings library
         self.__hub = PrimeHub()  # initialize LEGO Spike Prime Hub
         self.__hub_buttons = []  # initialize variable that holds info about pressed button
+
+        self.__hub.system.set_stop_button(None)  # Disable Center button to be used as return button
+        self.__hub.system.set_stop_button(Button.BLUETOOTH)  # Set Bluetooth button as stop button for system
 
     def set_game_settings(self):
         """ Sets the game variables for game speed and for the difficulty level.
@@ -40,7 +44,7 @@ class GameControl:
             elif Button.LEFT in pressed:
                 self.__hub.display.char("N")
                 self.__hardgame = False
-            elif Button.BLUETOOTH in pressed:
+            elif Button.CENTER in pressed:
                 action = True
 
         action = False  # reset input status
@@ -61,7 +65,7 @@ class GameControl:
                 if difficulty > 1:
                     difficulty -= 1
                     self.__game_speed += 50
-            elif Button.BLUETOOTH in pressed:
+            elif Button.CENTER in pressed:
                 action = True
             wait(250)
 
@@ -86,7 +90,7 @@ class GameControl:
             elif Button.LEFT in pressed:
                 self.__hub.display.char("N")
                 game_reset = False
-            elif Button.BLUETOOTH in pressed:
+            elif Button.CENTER in pressed:
                 self.__matrix.matrix_off()
                 action = True
 
