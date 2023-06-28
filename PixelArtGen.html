@@ -20,7 +20,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
 
-<html>
+<html lang="en">
 <head>
     <title>Pixel Art Painter for Spike Prime ColorLightMatrix</title>
     
@@ -31,7 +31,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
     <style>
         body {
             position: relative;
-            margin: 20px, auto;
+            margin: 20px auto;
             width: 95%;
         }
 
@@ -119,39 +119,37 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
 
     <footer>
         <div class="container">
-	        <span>
             <h4>About</h4>
             <p>This tool is designed to draw icons and pixel art displayed on matrixes built from Spike Prime ColorLightMatrix modules. To transfer a drawn picture to Pixel Pics Library copy the coordinates, edit pixel_pics.py, insert a valid new variable, and insert the coordinates.</p>
 	        <p>Large parts of the code were created with <a href="https://chat.openai.com">ChatGPT</a> and manually customized and improved.</p>
             <p>The Pixel Art Painter is part of the BrickBoyColor project. Learn more at <a href="https://www.lc-jrx.com">LC-jrx.com</a>. Source Code is available at <a href="https://github.com/lc-jrx/BrickBoyColor">GitHub</a>. The BrickBoyColor, the BrickBoyColor software and the BrickBoyColor games are licensed under the MIT License.</p>
             <h4>Disclaimer</h4>
             <p>LEGO® is a trademark of the LEGO Group of companies which does not sponsor, authorize or endorse this project.</p>
-            </span>
         </div>
     </footer>
 
 
     <script>
         $(document).ready(function() {
-            var clickedCoordinates = [];
-            var gridWidth = 6;
-            var gridHeight = 6;
+            let clickedCoordinates = [];
+            let gridWidth = 6;
+            let gridHeight = 6;
 
             // Function to create the grid field with the given size
             function createGrid() {
-                var gridContainer = $("#gridContainer");
+                let gridContainer = $("#gridContainer");
                 gridContainer.empty();
-                var minCellSize = Math.max(5, Math.floor(Math.min(window.innerWidth, window.innerHeight) / Math.max(gridWidth, gridHeight)));
+                let minCellSize = Math.max(5, Math.floor(Math.min(window.innerWidth, window.innerHeight) / Math.max(gridWidth, gridHeight)));
 
-                var maxCellSize = 20;
-                var cellSize = Math.min(minCellSize, maxCellSize);
+                let maxCellSize = 20;
+                let cellSize = Math.min(minCellSize, maxCellSize);
 
                 gridContainer.css("grid-template-columns", "repeat(" + gridWidth + ", " + cellSize + "px)");
                 gridContainer.css("grid-template-rows", "repeat(" + gridHeight + ", " + cellSize + "px)");
 
-                for (var col = 0; col < gridHeight; col++) {
-                    for (var row = 0; row < gridWidth; row++) {
-                        var cellId = "cell_" + row.toString().padStart(2, '0') + col.toString().padStart(2, '0');
+                for (let col = 0; col < gridHeight; col++) {
+                    for (let row = 0; row < gridWidth; row++) {
+                        let cellId = "cell_" + row.toString().padStart(2, '0') + col.toString().padStart(2, '0');
                         gridContainer.append("<div id='" + cellId + "' class='grid-item'></div>");
                     }
                 }
@@ -159,8 +157,8 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
 
             // Function to update the size of the grid field
             function updateGridSize() {
-                var newWidth = parseInt($("#widthInput").val());
-                var newHeight = parseInt($("#heightInput").val());
+                let newWidth = parseInt($("#widthInput").val());
+                let newHeight = parseInt($("#heightInput").val());
 
                 // Verification that the new size is valid
                 if (newWidth >= 3 && newHeight >= 3 && newWidth <= 30 && newHeight <= 30 && newWidth % 3 === 0 && newHeight % 3 === 0) {
@@ -181,11 +179,11 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
 
             // Click event for grid fields
             $(document).on("click", ".grid-item", function() {
-                var cellId = $(this).attr("id");
-                var coordinates = cellId.replace("cell_", "");
-                var x = parseInt(coordinates.charAt(0) + coordinates.charAt(1));
-                var y = parseInt(coordinates.charAt(2) + coordinates.charAt(3));
-                var newCoordinate = "(" + x + ", " + y + ")";
+                let cellId = $(this).attr("id");
+                let coordinates = cellId.replace("cell_", "");
+                let x = parseInt(coordinates.charAt(0) + coordinates.charAt(1));
+                let y = parseInt(coordinates.charAt(2) + coordinates.charAt(3));
+                let newCoordinate = "(" + x + ", " + y + ")";
                 $(this).toggleClass("selected");
 
                 if ($(this).hasClass("selected")) {
