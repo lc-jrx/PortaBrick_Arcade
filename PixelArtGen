@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!-- This tool is designed to draw icons and pixel art displayed on matrixes built from Spike Prime ColorLightMatrix modules. Large parts of the code were created with ChatGPT and manually customized and improved. -->
+<html>
+<head>
+    <title>Pixel Art Painter for Spike Prime ColorLightMatrix</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-gap: 1px;
+            margin-bottom: 20px;
+        }
+
+        .grid-item {
+            background-color: white;
+            cursor: pointer;
+            border: 1px solid #000;
+        }
+
+        .selected {
+            background-color: black;
+        }
+
+        #coordinates {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        #resetButton {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .size-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .size-container label {
+            font-weight: bold;
+        }
+
+        .size-container input {
+            width: 60px;
+        }
+
+        .app-container {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-container">
+            <h1>Pixel Art Painter</h1>
+            <h3>for Spike Prime ColorLightMatrix (and others)</h3>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="size-container">
+                        <label for="widthInput">Width:</label>
+                        <input type="number" id="widthInput" min="3" step="3" value="6">
+                        <label for="heightInput">Height:</label>
+                        <input type="number" id="heightInput" min="3" step="3" value="6">
+	                    <br />
+                        <button id="resizeButton" class="btn btn-primary">Change Matrix Size</button>
+                    </div>
+                    <div class="grid-container" id="gridContainer"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Coordinates</h3>
+                    <div id="coordinates"></div>
+                    <button id="resetButton" class="btn btn-primary">Reset Matrix Content</button>
+                </div>
+            </div>
+            <div class="row">
+                <p>The Pixel Art Painter is part of the BrickBoyColor project. Learn more at <a href="https://www.lc-jrx.com">LC-jrx.com</a>. Source Code is available at < href="https://github.com/lc-jrx/BrickBoyColor">GitHub</a>. The BrickBoyColor, the BrickBoyColor software and the BrickBoyColor games are licensed under the MIT License.</p>
+	            <h3>Disclaimer</h3>
+	            <p>LEGO® is a trademark of the LEGO Group of companies which does not sponsor, authorize or endorse this project.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var clickedCoordinates = [];
+            var gridWidth = 6;
+            var gridHeight = 6;
+
+            // Function to create the grid field with the given size
+            function createGrid() {
+                var gridContainer = $("#gridContainer");
+                gridContainer.empty();
+                var minCellSize = Math.max(5, Math.floor(Math.min(window.innerWidth, window.innerHeight) / Math.max(gridWidth, gridHeight)));
+
+                var maxCellSize = 20;
+                var cellSize = Math.min(minCellSize, maxCellSize);
+
+                gridContainer.css("grid-template-columns", "repeat(" + gridWidth + ", " + cellSize + "px)");
+                gridContainer.css("grid-template-rows", "repeat(" + gridHeight + ", " + cellSize + "px)");
+
+                for (var col = 0; col < gridHeight; col++) {
+                    for (var row = 0; row < gridWidth; row++) {
+                        var cellId = "cell_" + row.toString().padStart(2, '0') + col.toString().padStart(2, '0');
+                        gridContainer.append("<div id='" + cellId + "' class='grid-item'></div>");
+                    }
+                }
+            }
+
+            // Function to update the size of the grid field
+            function updateGridSize() {
+                var newWidth = parseInt($("#widthInput").val());
+                var newHeight = parseInt($("#heightInput").val());
+
+                // Verification that the new size is valid
+                if (newWidth >= 3 && newHeight >= 3 && newWidth <= 60 && newHeight <= 60 && newWidth % 3 === 0 && newHeight % 3 === 0) {
+                    gridWidth = newWidth;
+                    gridHeight = newHeight;
+                    createGrid();
+                } else {
+                    alert("Height and width must be a multiple of 3. The size of the matrix must be between 3x3 pixels and 60x60 pixels.");
+                }
+            }
+
+            // Function to reset the grid field and the coordinates list
+            function resetGrid() {
+                $(".grid-item").removeClass("selected");
+                clickedCoordinates = [];
+                $("#coordinates").empty();
+            }
+
+            // Click event for grid fields
+            $(document).on("click", ".grid-item", function() {
+                var cellId = $(this).attr("id");
+                var coordinates = cellId.replace("cell_", "");
+                var x = parseInt(coordinates.charAt(0) + coordinates.charAt(1));
+                var y = parseInt(coordinates.charAt(2) + coordinates.charAt(3));
+                var newCoordinate = "(" + x + ", " + y + ")";
+                $(this).toggleClass("selected");
+
+                if ($(this).hasClass("selected")) {
+                    clickedCoordinates.push(newCoordinate);
+                } else {
+                    clickedCoordinates = clickedCoordinates.filter(function(coord) {
+                        return coord !== newCoordinate;
+                    });
+                }
+
+                $("#coordinates").text(clickedCoordinates.join(", "));
+            });
+
+            // Click event for the resize button
+            $("#resizeButton").click(function() {
+                updateGridSize();
+                resetGrid();
+            });
+
+            // Click event for the reset button
+            $("#resetButton").click(function() {
+                resetGrid();
+            });
+
+            // Key event for the input fields
+            $("#widthInput, #heightInput").keypress(function(e) {
+                if (e.which === 13) {
+                    updateGridSize();
+                    resetGrid();
+                }
+            });
+
+            // Create the grid field with the default size 6x6
+            createGrid();
+        });
+    </script>
+</body>
+</html>
