@@ -38,3 +38,6 @@ II: The "Hard Game" setting has no effect on the size of the tennis rackets at t
 
 ### Licence
 The BrickBoyColor, the BrickBoyColor software and the BrickBoyColor games are licensed under the [MIT License](LICENSE).
+
+### Disclaimer
+LEGO® is a trademark of the LEGO Group of companies which does not sponsor, authorize or endorse this project.
