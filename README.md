@@ -1,4 +1,4 @@
-![BrickBoyColor_sm](https://github.com/lc-jrx/BrickBoyColor/assets/133227013/01c12322-218b-4a48-860d-f83e447a8038)
+![BBC_Left_Front_trans](https://github.com/lc-jrx/BrickBoyColor/assets/133227013/0d9ec56b-810a-4562-9740-c8b6e13827c0)
 
 # BrickBoyColor
 This project is about a fully working portable arcade gaming console made from 100% pure LEGO® and Python/MicroPython.
