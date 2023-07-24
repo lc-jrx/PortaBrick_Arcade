@@ -1,12 +1,12 @@
 ![BrickBoyColor_sm](https://github.com/lc-jrx/BrickBoyColor/assets/133227013/01c12322-218b-4a48-860d-f83e447a8038)
 
 # BrickBoyColor
-This project is about a fully working portable arcade gaming console made from 100% pure LEGO® and Pybricks framework.
+This project is about a fully working portable arcade gaming console made from 100% pure LEGO® and Python/MicroPython.
 
 ***
 
 ### General Info
-Basis for the project are the electronic components from LEGO® Spike Prime and elements from LEGO® Technic. The code is written in Python/Micropython and is based upon [Pybricks](http://pybricks.com) project – thanks a lot!
+Basis for the project are the electronic components from LEGO® Spike Prime and elements from LEGO® Technic. The code is written in Python/Micropython and is based upon [Pybricks](http://pybricks.com) project – thanks a lot! The project was carried out as part of the Bachelor programme "[Online-Studiengang Medieninformatik](https://informatik.th-brandenburg.de/studium/bachelorstudiengaenge/online-studiengang-medieninformatik/)" (Online Study Program Media Informatics)" at the [University of Applied Sciences Brandenburg](https://www.th-brandenburg.de). 
 
 ### Games & How to play
 
@@ -32,10 +32,11 @@ I: When a higher game speed aka difficulty level is selected, the movement of th
 II: The "Hard Game" setting has no effect on the size of the tennis rackets at the low resolution of 6x6 pixels.
 
 ### Future or possible expansion and further development
-- more games like Tetris, Space Invaders or Pac Man
+- rework of main menu
+- addition of more games like Tetris, Space Invaders or Pac Man
 - wireless connection between two BrickBoyColor for multi-player games
-- Extension of the BrickBoyColor to a stationary arcade machine
-
+- extension of the BrickBoyColor to a stationary arcade machine
+- port to LEGO® native Python as used in Spike app 
 ### Licence
 The BrickBoyColor, the BrickBoyColor software and the BrickBoyColor games are licensed under the [MIT License](LICENSE).
 
