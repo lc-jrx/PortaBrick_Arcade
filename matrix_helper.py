@@ -92,8 +92,8 @@ class MatrixHelper:
     def __recalc_coordinates(self, abs_x, abs_y):
         """Converts a coordinate of the given resolution to the coordinates of a
         single matrix of the display composed of matrix modules."""
-        self.__new_x = abs_x - (abs_x // 3 * 3)
-        self.__new_y = abs_y - (abs_y // 3 * 3)
+        self.__new_x = abs_x % 3
+        self.__new_y = abs_y % 3
         self.__matrix_id = (abs_y // 3 * self.__res_x / 3) + abs_x // 3
         return self.__new_x, self.__new_y, int(self.__matrix_id)
 
