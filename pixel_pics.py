@@ -1,5 +1,5 @@
 """
-Small library of icons aka emojies used in BrickBoyColor project
+Small library of icons aka emojies used in PortaBrick Arcade project
 Additionally, this class contains a character collection for display on 6x6 pixel displays.
 
 Copyright <2023> <LC-jrx>

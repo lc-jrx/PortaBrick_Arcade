@@ -1,7 +1,7 @@
 ![BrickBoyColor_sm](https://github.com/lc-jrx/BrickBoyColor/assets/133227013/01c12322-218b-4a48-860d-f83e447a8038)
 
-# BrickBoyColor
-This project is about a fully working portable arcade gaming console made from 100% pure LEGO® and Python/MicroPython.
+# PortaBrick Arcade
+This project is about a fully working portable arcade gaming console made from 100% pure LEGO® and Python/MicroPython. This project is now ready to vote for at LEGO® Ideas platform. If you want to make the **PortaBrick Arcade** a real product please vote for at [ideas.lego.com](https://ideas.lego.com/projects/53e8d771-166c-4a35-85d3-25e3512eb799).
 
 ***
 
@@ -10,11 +10,11 @@ Basis for the project are the electronic components from LEGO® Spike Prime and 
 
 ### Games & How to play
 
-Currently two arcade games are implemented for the BrickBoyColor. The first game is "BrickPong" – an implementation of the the classic arcade game Pong. The second one named "BrickSnake" is an implementation of the well-known game "Snake" from earlier Nokia phones.
+Currently two arcade games are implemented for the PortaBrick Arcade. The first game is "BrickPong" – an implementation of the the classic arcade game Pong. The second one named "BrickSnake" is an implementation of the well-known game "Snake" from earlier Nokia phones.
 
 
 #### Program control
-The BrickBoyColor is controlled by the four buttons of the hub. The Bluetooth button serves as a stop and ends the whole program sequence. The center button serves as an input button and confirms the selected choice in menus. The selection itself is made using the two arrow keys.
+The PortaBrick Arcade is controlled by the four buttons of the hub. The Bluetooth button serves as a stop and ends the whole program sequence. The center button serves as an input button and confirms the selected choice in menus. The selection itself is made using the two arrow keys.
 
 #### Game controls
 After starting the games, the input is done via the two game controllers.
@@ -34,11 +34,11 @@ II: The "Hard Game" setting has no effect on the size of the tennis rackets at t
 ### Future or possible expansion and further development
 - rework of main menu
 - addition of more games like Tetris, Space Invaders or Pac Man
-- wireless connection between two BrickBoyColor for multi-player games
-- extension of the BrickBoyColor to a stationary arcade machine
+- wireless connection between two PortaBrick Arcade for multi-player games
+- extension of the PortaBrick Arcade to a stationary arcade machine
 - port to LEGO® native Python as used in Spike app 
 ### Licence
-The BrickBoyColor, the BrickBoyColor software and the BrickBoyColor games are licensed under the [MIT License](LICENSE).
+The PortaBrick Arcade, the PortaBrick Arcade software and the PortaBrick Arcade games are licensed under the [MIT License](LICENSE).
 
 ### Disclaimer
 LEGO® is a trademark of the LEGO Group of companies which does not sponsor, authorize or endorse this project.

@@ -1,5 +1,5 @@
 """
-Main program for BrickBoyColor project
+Main program for PortaBrick Arcade project
 
 Copyright <2023> <LC-jrx>
 
@@ -31,8 +31,8 @@ from brick_pong import BrickPong
 from brick_snake import BrickSnake
 
 
-class BrickBoyColor:
-    """ Main Class of the BrickBoyColor. Controls the main menu and leads into the two games.
+class PortaBrickArcade:
+    """ Main Class of the PortaBrick Arcade. Controls the main menu and leads into the two games.
     """
     def __init__(self):
         self.display_resolution = (6, 6)
@@ -44,7 +44,7 @@ class BrickBoyColor:
         # self.state = True
 
     def start_up(self):
-        self.hub.display.text("BrickBoy Color", 200, 50)
+        self.hub.display.text("PortaBrick Arcade", 200, 50)
         self.hub.display.icon(Icon.HEART)
         wait(1000)
 
@@ -103,7 +103,7 @@ class BrickBoyColor:
 
 if __name__ == "__main__":
 
-    game_session = BrickBoyColor()
+    game_session = PortaBrickArcade()
     game_session.start_up()
     # game_session.dialog()
     game_session.dialog_input()

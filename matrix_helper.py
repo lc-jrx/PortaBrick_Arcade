@@ -1,5 +1,5 @@
 """
-Class MatrixHelper as used in BrickBoyColor project
+Class MatrixHelper as used in PortaBrick Arcade project
 
 Copyright <2023> <LC-jrx>
 

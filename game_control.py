@@ -1,5 +1,5 @@
 """
-Class GameControl used in BrickBoyColor project
+Class GameControl used in PortaBrick Arcade project
 
 Copyright <2023> <LC-jrx>
 

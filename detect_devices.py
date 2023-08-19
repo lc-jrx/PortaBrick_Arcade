@@ -1,5 +1,5 @@
 """
-Class Detect Devices used in BrickBoyColor project
+Class Detect Devices used in PortaBrick Arcade project
 
 Copyright <2023> <LC-jrx>
 
