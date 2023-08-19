@@ -1,4 +1,4 @@
-![BrickBoyColor_sm](https://github.com/lc-jrx/BrickBoyColor/assets/133227013/01c12322-218b-4a48-860d-f83e447a8038)
+![BBC_Left_Front_trans](https://github.com/lc-jrx/BrickBoyColor/assets/133227013/0d9ec56b-810a-4562-9740-c8b6e13827c0)
 
 # PortaBrick Arcade
 This project is about a fully working portable arcade gaming console made from 100% pure LEGO® and Python/MicroPython. This project is now ready to vote for at LEGO® Ideas platform. If you want to make the **PortaBrick Arcade** a real product please vote for at [ideas.lego.com](https://ideas.lego.com/projects/53e8d771-166c-4a35-85d3-25e3512eb799).
