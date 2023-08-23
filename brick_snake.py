@@ -24,7 +24,6 @@ from pybricks.parameters import Port, Color
 from pybricks.tools import wait as blocking_wait, StopWatch
 from matrix_helper import MatrixHelper
 from game_control import GameControl
-from pixel_pics import PixelPics
 from urandom import randint
 
 
@@ -37,6 +36,9 @@ class BrickSnake:
         # Basic variables
         self.__resolution = (display_res_x, display_res_y)
         self.__game_speed = 300  # work speed itself
+        self.app_icon = "snake"
+        self.app_name = "Snake"
+        self.app_color = Color.ORANGE
 
         # Variables for game SNAKE
         self.__hardgame = False  # If True hitting the wall ends the game
@@ -48,7 +50,7 @@ class BrickSnake:
         self.__render_off = []
         self.__snake_had_lunch = None
 
-        self.loop = None   # Prevents a 180 degree turn on same.
+        self.loop = None  # Prevents a 180 degree turn on same.
         self.__game_counter = None
         self.__gameover = None
         self.__quit = False
@@ -57,7 +59,6 @@ class BrickSnake:
         # Initialize software and hardware
         self.__gamecontrol = GameControl(self.__resolution[0], self.__resolution[1], self.__game_speed)
         self.__matrix = MatrixHelper(self.__resolution[0], self.__resolution[1])  # initialize driver for matrix
-        self.__pixel_pics = PixelPics()  # initialize pixel drawings library
         self.__hub = PrimeHub()  # initialize LEGO Spike Prime Hub
         self.__button_L = ForceSensor(Port.E)  # initialize LEGO Spike Prime Force Sensor as left button
         self.__button_R = ForceSensor(Port.F)  # initialize LEGO Spike Prime Force Sensor as right button

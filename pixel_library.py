@@ -20,16 +20,28 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
 """
 
 
-class PixelPics:
+class PixelLibrary:
     def __init__(self):
-        self.characters_dict = None
-        self.smiley = ((0, 0), (1, 0), (0, 1), (1, 1), (4, 0), (5, 0), (4, 1),
-                       (5, 1), (0, 3), (1, 4), (2, 4), (3, 4), (4, 4), (5, 3))
-        self.smiley_sad = ((0, 0), (1, 0), (0, 1), (1, 1), (4, 0), (5, 0), (4, 1),
-                           (5, 1), (0, 5), (1, 4), (2, 4), (3, 4), (4, 4), (5, 5))
-    
+        self.__characters_dict = None
+        self.__pixelpics = None
+
+    def pixelpics(self, icon):
+        self.__pixelpics = {
+            'smiley': [(0, 0), (1, 0), (0, 1), (1, 1), (4, 0), (5, 0), (4, 1), (5, 1), (0, 3), (1, 4), (2, 4), (3, 4),
+                       (4, 4), (5, 3)],
+            'smiley_sad': [(0, 0), (1, 0), (0, 1), (1, 1), (4, 0), (5, 0), (4, 1), (5, 1), (0, 5), (1, 4), (2, 4),
+                           (3, 4), (4, 4), (5, 5)],
+            'heart': [(1, 0), (0, 1), (0, 2), (1, 3), (2, 4), (3, 4), (4, 3), (5, 2), (5, 1), (4, 0), (3, 1), (2, 1),
+                      (1, 1), (1, 2), (2, 2), (3, 2), (4, 2), (4, 1), (3, 3), (2, 3), (0, 3), (1, 4), (2, 5), (3, 5),
+                      (4, 4), (5, 3)],
+            'pong': [(0, 1), (0, 2), (0, 3), (5, 4), (5, 3), (5, 2), (2, 2)],
+            'snake': [(1, 4), (2, 4), (3, 4), (4, 4), (4, 3), (4, 1)]
+        }
+
+        return self.__pixelpics[icon]
+
     def characters(self, char_input):
-        self.characters_dict = {
+        self.__characters_dict = {
             'A': [(1, 1), (2, 0), (3, 0), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5), (1, 5), (1, 4), (1, 3), (1, 2),
                   (2, 3), (3, 3)],
             'B': [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 5), (3, 5), (4, 4), (4, 3), (3, 2), (2, 2),
@@ -90,5 +102,5 @@ class PixelPics:
             '!': [(2, 0), (3, 0), (2, 3), (2, 5), (3, 2), (3, 5), (3, 3), (2, 2), (2, 1), (3, 1)],
             ' ': []
         }
-        
-        return self.characters_dict[char_input.upper()]
+
+        return self.__characters_dict[char_input.upper()]

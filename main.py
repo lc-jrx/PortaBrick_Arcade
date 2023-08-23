@@ -17,96 +17,107 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-
 from pybricks.hubs import PrimeHub
-from pybricks.parameters import Icon, Button
+from pybricks.parameters import Icon, Button, Color
 from pybricks.tools import wait
 
-# Import helper files (ColorMatrixDisplay driver, pixel pic library)
+# Import helper files (ColorMatrixDisplay driver, pixel library)
 from matrix_helper import MatrixHelper
-from pixel_pics import PixelPics
+from pixel_library import PixelLibrary
 
-# Import games
+# Import games (Add additional games here and initialize them in "__init__" section)
 from brick_pong import BrickPong
 from brick_snake import BrickSnake
 
 
 class PortaBrickArcade:
-    """ Main Class of the PortaBrick Arcade. Controls the main menu and leads into the two games.
+    """ Main Class of the PortaBrick Arcade. Controls the main menu and leads into the games.
     """
-    def __init__(self):
-        self.display_resolution = (6, 6)
 
+    def __init__(self):
+        # Basic variables
+        self.display_resolution = (6, 6)
+        self.pressed = []
+
+        # Load available games (Must be initialized AND added to "available_games" dictionary!!!)
+        self.snake_game = BrickSnake(self.display_resolution[0], self.display_resolution[1])
+        self.pong_game = BrickPong(self.display_resolution[0], self.display_resolution[1])
+        self.available_games = (self.snake_game, self.pong_game)
+
+        # Initialize classes and Hardware
         self.hub = PrimeHub()
         self.matrix = MatrixHelper(self.display_resolution[0], self.display_resolution[1])
-        self.pixel_pics = PixelPics()
-        self.pressed = []
-        # self.state = True
+        self.pixel_lib = PixelLibrary()
+
+        # Change functions of hub's buttons
+        self.hub.system.set_stop_button(None)  # Disable Center button to be used as return button
+        self.hub.system.set_stop_button(Button.BLUETOOTH)  # Set Bluetooth button as stop button for system
 
     def start_up(self):
+        self.matrix.draw_pixel_graphic(self.pixel_lib.pixelpics("heart"), Color.RED)
         self.hub.display.text("PortaBrick Arcade", 200, 50)
-        self.hub.display.icon(Icon.HEART)
+        self.matrix.matrix_off()
         wait(1000)
-
-    def game_snake(self):
-        snake_game = BrickSnake(self.display_resolution[0], self.display_resolution[1])
-        snake_game.gameplay()
-
-    def game_pong(self):
-        pong_game = BrickPong(self.display_resolution[0], self.display_resolution[1])
-        pong_game.gameplay()
 
     def end_session(self):
         self.matrix.matrix_off()
         self.hub.display.off()
 
     def dialog(self):
-        self.hub.display.text("SNAKE", 200, 50)
+        counter = 0         # Counter for menu entries
+        action = False      # True closes game session and restarts dialog
+        sys_quit = False    # True closes program
+
+        def show_menu_entry(i):
+            self.matrix.matrix_off()
+            self.matrix.draw_pixel_graphic(self.pixel_lib.pixelpics(self.available_games[i].app_icon),
+                                           self.available_games[i].app_color)
+            self.hub.display.text(self.available_games[i].app_name, 200, 50)
+
+        # Show little Howto how to choose the entries
+        self.hub.display.text("Choose game", 200, 100)
         wait(500)
-        self.hub.display.icon(Icon.ARROW_LEFT_DOWN)
-        wait(1000)
-        self.hub.display.text("PONG", 200, 50)
+        self.hub.display.text("Next", 200, 100)
         wait(500)
         self.hub.display.icon(Icon.ARROW_RIGHT_DOWN)
         wait(1000)
-        self.hub.display.text("Quit", 200, 50)
+        self.hub.display.text("Previous", 200, 100)
+        wait(500)
+        self.hub.display.icon(Icon.ARROW_LEFT_DOWN)
+        wait(1000)
+        self.hub.display.text("Quit", 200, 100)
         wait(500)
         self.hub.display.icon(Icon.ARROW_RIGHT_UP)
         wait(1000)
-        self.hub.display.char("?")
-        wait(1000)
-
-    def dialog_input(self):
-        action = False  # set input status
-        sys_quit = False  # True closes game session
 
         while not sys_quit:
-            self.dialog()
+            # Show the first menu entry
+            show_menu_entry(counter)
+
             while not action:
                 pressed = self.hub.buttons.pressed()
                 if Button.LEFT in pressed:
-                    self.hub.display.char("S")
-                    self.game_snake()
-                    action = True
+                    if counter > 0:
+                        counter -= 1
+                        show_menu_entry(counter)
                 elif Button.RIGHT in pressed:
-                    self.hub.display.char("P")
-                    self.game_pong()
+                    if counter < len(self.available_games) - 1:
+                        counter += 1
+                        show_menu_entry(counter)
+                elif Button.CENTER in pressed:
+                    self.available_games[counter].gameplay()
                     action = True
                 elif Button.BLUETOOTH in pressed:
-                    self.hub.display.char("Q")
-                    # self.state = False
-                    sys_quit = True
-                    action = True
+                    self.end_session()
             action = False
-        self.end_session()
 
 
 if __name__ == "__main__":
-
-    game_session = PortaBrickArcade()
-    game_session.start_up()
-    # game_session.dialog()
-    game_session.dialog_input()
-    game_session.end_session()
+    try:
+        game_session = PortaBrickArcade()
+        game_session.start_up()
+        game_session.dialog()
+    except SystemExit:
+        game_session.end_session()
 
 # Leave the next line empty to fullfil PEP 8

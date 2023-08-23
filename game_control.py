@@ -22,7 +22,7 @@ from pybricks.hubs import PrimeHub
 from pybricks.parameters import Button, Color
 from pybricks.tools import wait
 from matrix_helper import MatrixHelper
-from pixel_pics import PixelPics
+from pixel_library import PixelLibrary
 
 
 class GameControl:
@@ -41,12 +41,9 @@ class GameControl:
 
         # Initialize software and hardware
         self.__matrix = MatrixHelper(self.__resolution[0], self.__resolution[1])  # initialize driver for matrix
-        self.__pixel_pics = PixelPics()  # initialize pixel drawings library
+        self.__pixel_lib = PixelLibrary()  # initialize pixel drawings library
         self.__hub = PrimeHub()  # initialize LEGO Spike Prime Hub
         self.__hub_buttons = []  # initialize variable that holds info about pressed button
-
-        self.__hub.system.set_stop_button(None)  # Disable Center button to be used as return button
-        self.__hub.system.set_stop_button(Button.BLUETOOTH)  # Set Bluetooth button as stop button for system
 
     def set_game_settings(self):
         """ Sets the game variables for game speed and for the difficulty level.
@@ -99,7 +96,7 @@ class GameControl:
         game_quit = None
         game_reset = None
         self.__matrix.matrix_off()
-        self.__matrix.draw_pixel_graphic(self.__pixel_pics.smiley, Color.GREEN)
+        self.__matrix.draw_pixel_graphic(self.__pixel_lib.pixelpics('smiley'), Color.GREEN)
         self.__hub.display.text("Play again?", 200, 50)
         while not action:
             pressed = self.__hub.buttons.pressed()
@@ -118,6 +115,8 @@ class GameControl:
 
     def gameover(self):
         self.__matrix.matrix_off()
-        self.__hub.speaker.play_notes(["B3/2", "B2/2"], 160)  # make a sad sound
-        self.__matrix.draw_pixel_graphic(self.__pixel_pics.smiley_sad, Color.RED)  # show a grafik for game over
+        # make a sad sound
+        self.__hub.speaker.play_notes(["B3/2", "B2/2"], 160)
+        # show a grafik for game over
+        self.__matrix.draw_pixel_graphic(self.__pixel_lib.pixelpics('smiley_sad'), Color.RED)
         self.__hub.display.text("Game Over", 200, 50)
